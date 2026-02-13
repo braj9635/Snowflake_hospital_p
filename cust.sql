@@ -9,6 +9,6 @@
     storage_allowed_locations = ( 's3://new-hospital-db' )
     -- storage_blocked_locations = ( 's3://<location1>', 's3://<location2>' )
     -- comment = '<comment>'
-    ;
+    ; 
 
-       DESCRIBE storage integration STORAGE_S3_INTEGRATION;
+       DESCRIBE storage 
