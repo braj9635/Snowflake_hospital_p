@@ -17,3 +17,6 @@
 
 
     bhbhbhbhbhbbbbbhbh
+
+
+    ALTER GIT REPOSITORY snowflake_deployment FETCH;
