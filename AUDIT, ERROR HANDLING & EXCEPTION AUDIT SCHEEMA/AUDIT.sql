@@ -1,3 +1,47 @@
+
+-- ============================================================
+-- 2. PIPE_EXECUTION_LOG
+-- ============================================================
+
+
+CREATE OR REPLACE TABLE HOSPITAL_ANALYTICS.AUDIT.PIPE_EXECUTION_LOG
+(
+  
+    EXECUTION_ID          VARCHAR       DEFAULT UUID_STRING()    NOT NULL,
+    PIPE_NAME             VARCHAR                                NOT NULL,
+    PIPE_SCHEMA           VARCHAR                                NOT NULL,
+    PIPE_DATABASE         VARCHAR                                NOT NULL,
+    EXECUTION_STATUS      VARCHAR                                NOT NULL,  -- STARTED | SUCCESS | PARTIAL | FAILED | NO_FILES
+    TARGET_TABLE          VARCHAR                                NOT NULL,
+    BATCH_ID              VARCHAR,
+    SOURCE_LOCATION       VARCHAR,                                          -- S3 path prefix
+    FILES_SUBMITTED       NUMBER        DEFAULT 0,
+    FILES_LOADED          NUMBER        DEFAULT 0,
+    FILES_FAILED          NUMBER        DEFAULT 0,
+    FILES_SKIPPED         NUMBER        DEFAULT 0,
+    ROWS_PARSED           NUMBER        DEFAULT 0,
+    ROWS_LOADED           NUMBER        DEFAULT 0,
+    ROWS_ERRORS           NUMBER        DEFAULT 0,
+    PIPE_RECEIVED_TIME    TIMESTAMP_NTZ,                                     -- when Snowpipe received SQS notification
+    START_TIMESTAMP       TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    END_TIMESTAMP         TIMESTAMP_NTZ,
+    DURATION_SECONDS      NUMBER,
+    LATENCY_SECONDS       NUMBER,                                              -- time from S3 upload to load complete
+    ERROR_MESSAGE         VARCHAR,
+    ERROR_COUNT           NUMBER        DEFAULT 0,
+    DQ_ISSUES_COUNT       NUMBER        DEFAULT 0,
+    CREATED_AT            TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    CREATED_BY            VARCHAR       DEFAULT CURRENT_USER(),
+    WAREHOUSE_NAME        VARCHAR       DEFAULT CURRENT_WAREHOUSE(),
+
+    CONSTRAINT PK_PIPE_EXEC PRIMARY KEY (EXECUTION_ID)
+)
+CLUSTER BY (PIPE_NAME, START_TIMESTAMP)
+DATA_RETENTION_TIME_IN_DAYS = 90
+COMMENT = 'Tracks every Snowpipe execution run with status and row counts';
+
+select * from HOSPITAL_ANALYTICS.AUDIT.PIPE_EXECUTION_LOG;
+
 -- ============================================================
 -- 2.1 MASTER AUDIT TABLE - Pipeline Execution Tracking
 -- ============================================================
